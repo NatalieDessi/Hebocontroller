@@ -38,6 +38,9 @@ class Keyboard:
                 self._current_key = self._keys[-1]
 
     def _device_filter(self, _device: BLEDevice, advertisement):
+        if _device.name is None:
+            return False
+        print(_device.name)
         return str(self.device_number) in _device.name
 
     def close(self, _event: KeyboardEvent = None):

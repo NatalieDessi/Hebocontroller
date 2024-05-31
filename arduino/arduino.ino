@@ -5,7 +5,8 @@
 #define MOTOR_2F 8
 #define MOTOR_2B 7
 #define SPEED 180
-#define BOT_ID 1
+// Botname can't have uppercase letters!
+#define BOT_NAME "hebobot 1"
 
 BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214");
 BLECharCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
@@ -16,12 +17,11 @@ void setup() {
   pinMode(MOTOR_2F, OUTPUT);
   pinMode(MOTOR_2B, OUTPUT);
 
-  Serial.begin(9600);
   if (!BLE.begin()) {
     while (1);
   }
-
-  BLE.setLocalName("Hebobot " + BOT_ID);
+  
+  BLE.setLocalName(BOT_NAME);
   BLE.setAdvertisedService(ledService);
 
   ledService.addCharacteristic(switchCharacteristic);
@@ -51,8 +51,6 @@ void blePeripheralDisconnectHandler(BLEDevice central) {
 
 void switchCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
   char value = switchCharacteristic.value();
-  Serial.println(value);
-
   switch (value) {
     case 'w' :
       analogWrite(MOTOR_1B, 0);
@@ -83,7 +81,7 @@ void switchCharacteristicWritten(BLEDevice central, BLECharacteristic characteri
       analogWrite(MOTOR_2F, 0);
       analogWrite(MOTOR_1B, 0);
       analogWrite(MOTOR_2B, 0);
-      break
+      break;
   ;}
 }
   
