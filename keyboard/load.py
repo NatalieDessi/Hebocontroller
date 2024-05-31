@@ -4,19 +4,20 @@ from asyncio import AbstractEventLoop
 from sys import argv
 
 import keyboard
-from bleak import BleakScanner, BleakClient, BleakGATTCharacteristic
+from bleak import BleakScanner, BleakClient, BleakGATTCharacteristic, BLEDevice
 from keyboard import KeyboardEvent
 
 
 class Keyboard:
-    def __init__(self, loop: AbstractEventLoop, service_uuid: str, characteristic_uuid: str, polling_rate: int = 100):
+    def __init__(self, loop: AbstractEventLoop, device_number: int, polling_rate: int = 100):
         self._client = None
         self._loop = loop
-        self._service_uuid = service_uuid
-        self._characteristic_uuid = characteristic_uuid
+        self._service_uuid = "19B10000-E8F2-537E-4F6C-D104768A1214"
+        self._characteristic_uuid = "19B10001-E8F2-537E-4F6C-D104768A1214"
         self._poling_rate = polling_rate
         self._keys = []
         self._current_key = ' '
+        self.device_number = device_number
 
         keyboard.hook_key('w', self._key_hook)
         keyboard.hook_key('a', self._key_hook)
@@ -36,8 +37,8 @@ class Keyboard:
             elif event.name == self._current_key:
                 self._current_key = self._keys[-1]
 
-    def _device_filter(self, _device, advertisement):
-        return self._service_uuid.lower() in advertisement.service_uuids
+    def _device_filter(self, _device: BLEDevice, advertisement):
+        return str(self.device_number) in _device.name
 
     def close(self, _event: KeyboardEvent = None):
         self._loop.call_soon(self._client.disconnect)
@@ -61,11 +62,11 @@ class Keyboard:
 
 
 def main():
-    if len(argv) != 3:
+    if len(argv) != 2:
         print("Please specify service and characteristic uuid as cli parameters")
         return
     loop = asyncio.new_event_loop()
-    _keyboard = Keyboard(loop, argv[1], argv[2])
+    _keyboard = Keyboard(loop, int(argv[1]))
     try:
         loop.run_until_complete(_keyboard.start())
     except KeyboardInterrupt:

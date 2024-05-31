@@ -1,21 +1,3 @@
-/*
-  Callback LED
-
-  This example creates a Bluetooth® Low Energy peripheral with service that contains a
-  characteristic to control an LED. The callback features of the
-  library are used.
-
-  The circuit:
-  - Arduino MKR WiFi 1010, Arduino Uno WiFi Rev2 board, Arduino Nano 33 IoT,
-    Arduino Nano 33 BLE, or Arduino Nano 33 BLE Sense board.
-
-  You can use a generic Bluetooth® Low Energy central app, like LightBlue (iOS and Android) or
-  nRF Connect (Android), to interact with the services and characteristics
-  created in this sketch.
-
-  This example code is in the public domain.
-*/
-
 #include <ArduinoBLE.h>
 
 #define MOTOR_1F 10
@@ -23,10 +5,9 @@
 #define MOTOR_2F 8
 #define MOTOR_2B 7
 #define SPEED 180
+#define BOT_ID 1
 
-BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // create service
-
-// create switch characteristic and allow remote device to read and write
+BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214");
 BLECharCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
 
 void setup() { 
@@ -36,37 +17,27 @@ void setup() {
   pinMode(MOTOR_2B, OUTPUT);
 
   Serial.begin(9600);
-  // begin initialization
   if (!BLE.begin()) {
     while (1);
   }
 
-  // set the local name peripheral advertises
-  BLE.setLocalName("LEDCallback");
-  // set the UUID for the service this peripheral advertises
+  BLE.setLocalName("Hebobot " + BOT_ID);
   BLE.setAdvertisedService(ledService);
 
-  // add the characteristic to the service
   ledService.addCharacteristic(switchCharacteristic);
 
-  // add service
   BLE.addService(ledService);
 
-  // assign event handlers for connected, disconnected to peripheral
   BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
   BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
 
-  // assign event handlers for characteristic
   switchCharacteristic.setEventHandler(BLEWritten, switchCharacteristicWritten);
-  // set an initial value for the characteristic
   switchCharacteristic.setValue(0);
 
-  // start advertising
   BLE.advertise();
 }
 
 void loop() {
-  // poll for Bluetooth® Low Energy events
   BLE.poll();
 }
 
