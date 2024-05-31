@@ -6,7 +6,7 @@
 #define MOTOR_2B 7
 #define SPEED 180
 // Botname can't have uppercase letters!
-#define BOT_NAME "hebobot 1"
+#define BOT_NAME "hebobot #1"
 
 BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214");
 BLECharCharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);

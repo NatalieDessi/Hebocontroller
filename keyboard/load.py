@@ -40,8 +40,7 @@ class Keyboard:
     def _device_filter(self, _device: BLEDevice, advertisement):
         if _device.name is None:
             return False
-        print(_device.name)
-        return str(self.device_number) in _device.name
+        return _device.name.endswith(f'#{str(self.device_number)}')
 
     def close(self, _event: KeyboardEvent = None):
         self._loop.call_soon(self._client.disconnect)
