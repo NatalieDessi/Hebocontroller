@@ -36,5 +36,5 @@ Das Python-Programm zum Steuern der Hebobots.
 Um das Projekt zu starten, kann folgender Befehl verwendet werden:
 
 ```bash
-python load.py
+python load.py <nummer> (*optional name)
 ```
