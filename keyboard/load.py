@@ -40,7 +40,9 @@ class Keyboard:
     def _device_filter(self, _device: BLEDevice, advertisement):
         if _device.name is None:
             return False
-        return _device.name.endswith(f'#{str(self.device_number)}')
+        name = f'{sys.argv[2] if len(sys.argv) == 3 else "hebobot"} #{str(self.device_number)}'
+        print(f'"{name}"')
+        return _device.name == name
 
     def close(self, _event: KeyboardEvent = None):
         self._loop.call_soon(self._client.disconnect)
@@ -64,7 +66,7 @@ class Keyboard:
 
 
 def main():
-    if len(argv) != 2:
+    if len(argv) <= 2:
         print("Please specify service and characteristic uuid as cli parameters")
         return
     loop = asyncio.new_event_loop()
